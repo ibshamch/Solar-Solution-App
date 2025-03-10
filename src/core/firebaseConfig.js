@@ -1,0 +1,8 @@
+export const firebaseConfig = {
+  apiKey: 'AIzaSyC6MMRbrNq8RtxEOlFa3DrO_0EY84IdJag',
+  authDomain: 'solar-solution-app.firebaseapp.com',
+  projectId: 'solar-solution-app',
+  storageBucket: 'solar-solution-app.firebasestorage.app',
+  messagingSenderId: '296233105213',
+  appId: '1:296233105213:web:1964d20cddbb9b764eb754',
+};
