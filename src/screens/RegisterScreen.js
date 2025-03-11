@@ -44,7 +44,7 @@ export default function RegisterScreen({ navigation }) {
     setLoading(false);
 
     // Navigate to the next screen (e.g., login screen)
-    // navigation.replace('LoginScreen');
+    navigation.replace('LoginScreen');
   };
 
   return (

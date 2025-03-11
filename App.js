@@ -12,6 +12,9 @@ import {
   RegisterScreen,
   ResetPasswordScreen,
 } from './src/screens/index';
+import AdminLoginScreen from './src/screens/AdminLogin';
+import AdminDashboardScreen from './src/screens/AdminDashboard';
+import Homepage from './src/screens/Homepage';
 
 initializeApp(firebaseConfig);
 
@@ -31,6 +34,12 @@ export default function App() {
             name="ResetPasswordScreen"
             component={ResetPasswordScreen}
           />
+          <Stack.Screen name="AdminLoginScreen" component={AdminLoginScreen} />
+          <Stack.Screen
+            name="AdminDashboardScreen"
+            component={AdminDashboardScreen}
+          />
+          <Stack.Screen name="HomepageScreen" component={Homepage} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

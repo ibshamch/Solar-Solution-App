@@ -1,20 +1,15 @@
-// Here i will put my all auth methods for firebase
-
-import firebase from 'firebase/compat/app';
+import { auth, db } from './../core/firebaseConfig'; // Import Firebase instances
 import {
-  getAuth,
   createUserWithEmailAndPassword,
   updateProfile,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
 } from 'firebase/auth';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 
-// Sign Up Method
-// Before this enable email-pass from auth sign in providers in google firebase
-
+// ✅ Sign Up (Stores user in Firestore with `approved: false`)
 export async function signUpUser({ name, email, password }) {
   try {
-    const auth = getAuth();
     const userCredential = await createUserWithEmailAndPassword(
       auth,
       email,
@@ -24,29 +19,45 @@ export async function signUpUser({ name, email, password }) {
 
     await updateProfile(user, { displayName: name });
 
+    // Save user in Firestore with `approved: false`
+    await setDoc(doc(db, 'users', user.uid), {
+      name,
+      email,
+      approved: false, // Default approval status
+      createdAt: new Date(),
+    });
+
     return { user };
   } catch (error) {
     return { error: error.message };
   }
 }
 
+// ✅ Login (Checks if the user is approved)
 export async function loginUser({ email, password }) {
   try {
-    const auth = getAuth();
     const userCredential = await signInWithEmailAndPassword(
       auth,
       email,
       password
     );
-    return { user: userCredential.user };
+    const user = userCredential.user;
+
+    // Check approval status
+    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    if (userDoc.exists() && !userDoc.data().approved) {
+      return { error: 'Your account is pending admin approval.' };
+    }
+
+    return { user };
   } catch (error) {
     return { error: error.message };
   }
 }
 
+// ✅ Reset Password
 export async function sendResetEmail(email) {
   try {
-    const auth = getAuth();
     await sendPasswordResetEmail(auth, email);
     return { message: 'Password reset email sent.' };
   } catch (error) {

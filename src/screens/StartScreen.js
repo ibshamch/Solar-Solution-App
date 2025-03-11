@@ -23,6 +23,12 @@ export default function StartScreen({ navigation }) {
       >
         Sign Up
       </Button>
+      <Button
+        mode="contained"
+        onPress={() => navigation.navigate('AdminLoginScreen')}
+      >
+        Sign in as Admin
+      </Button>
     </Background>
   );
 }

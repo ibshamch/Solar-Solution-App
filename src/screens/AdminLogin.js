@@ -10,10 +10,8 @@ import { passwordValidator } from '../helpers/passwordValidator';
 import BackButton from '../components/BackButton';
 import { TouchableOpacity, View, StyleSheet } from 'react-native';
 import { theme } from '../core/theme';
-import { loginUser } from '../api/auth-api';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
 
-export default function LoginScreen({ navigation }) {
+export default function AdminLoginScreen({ navigation }) {
   const [email, setEmail] = useState({ value: '', error: '' });
   const [password, setPassword] = useState({ value: '', error: '' });
   const [loading, setLoading] = useState(false);
@@ -25,32 +23,17 @@ export default function LoginScreen({ navigation }) {
     if (emailError || passwordError) {
       setEmail({ ...email, error: emailError });
       setPassword({ ...password, error: passwordError });
-      return;
+      return; // Prevent further execution if there's an error
     }
 
     setLoading(true);
 
-    const response = await loginUser({
-      email: email.value,
-      password: password.value,
-    });
-
-    if (response.error) {
-      alert(response.error);
-      setLoading(false);
-      return;
-    }
-
-    // Fetch user approval status from Firestore
-    const db = getFirestore();
-    const userRef = doc(db, 'users', response.user.uid);
-    const userDoc = await getDoc(userRef);
-
-    if (userDoc.exists() && userDoc.data().approved) {
-      alert('Login successful! Redirecting to Homepage.');
-      navigation.replace('HomepageScreen');
+    // Hardcoded Admin Credentials
+    if (email.value === 'admin@admin.com' && password.value === 'admin123') {
+      alert('Admin Login Successfully');
+      navigation.navigate('AdminDashboardScreen'); // Navigate to admin panel
     } else {
-      alert('Your account is not yet approved by the admin.');
+      alert('Invalid admin credentials');
     }
 
     setLoading(false);
@@ -60,7 +43,7 @@ export default function LoginScreen({ navigation }) {
     <Background>
       <BackButton goBack={navigation.goBack} />
       <Logo />
-      <Header>Welcome</Header>
+      <Header>Admin Login</Header>
       <TextInput
         label="Email"
         value={email.value}
@@ -76,22 +59,9 @@ export default function LoginScreen({ navigation }) {
         errorText={password.error}
         secureTextEntry
       />
-      <View style={styles.forgotPassword}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('ResetPasswordScreen')}
-        >
-          <Text style={styles.forgot}>Forgot your password?</Text>
-        </TouchableOpacity>
-      </View>
       <Button loading={loading} mode="contained" onPress={onLoginPressed}>
         Login
       </Button>
-      <View style={styles.row}>
-        <Text>Don't have an account? </Text>
-        <TouchableOpacity onPress={() => navigation.replace('RegisterScreen')}>
-          <Text style={styles.link}>Sign up</Text>
-        </TouchableOpacity>
-      </View>
     </Background>
   );
 }
@@ -101,7 +71,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: 4,
   },
-
   link: {
     fontWeight: 'bold',
     color: theme.colors.primary,
